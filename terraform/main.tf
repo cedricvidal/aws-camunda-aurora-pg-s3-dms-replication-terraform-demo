@@ -11,6 +11,17 @@ resource "aws_instance" "demo-instance-1" {
     }
 }
 
+resource "aws_vpc" "demo-vpc-1" {
+    cidr_block           = "172.31.0.0/16"
+    instance_tenancy     = "default"
+    enable_dns_support   = "true"
+    enable_dns_hostnames = "true"
+    enable_classiclink   = "false"
+    tags = {
+        Name = "demo-vpc-1"
+    }
+}
+
 resource "aws_subnet" "demo-subnet-public-1" {
     vpc_id = "vpc-07c275b9477368a53"
     cidr_block = "172.31.0.0/20"
