@@ -23,7 +23,7 @@ resource "aws_vpc" "demo-vpc-1" {
 }
 
 resource "aws_subnet" "demo-subnet-public-1" {
-    vpc_id = "vpc-07c275b9477368a53"
+    vpc_id = aws_vpc.demo-vpc-1.id
     cidr_block = "172.31.0.0/20"
     map_public_ip_on_launch = true
     availability_zone       = "us-west-1a"
@@ -33,11 +33,20 @@ resource "aws_subnet" "demo-subnet-public-1" {
 }
 
 resource "aws_subnet" "demo-subnet-public-2" {
-    vpc_id = "vpc-07c275b9477368a53"
+    vpc_id = aws_vpc.demo-vpc-1.id
     cidr_block = "172.31.16.0/20"
     map_public_ip_on_launch = true
     availability_zone       = "us-west-1b"
     tags = {
         Name = "demo-subnet-public-2"
+    }
+}
+
+# Creating Internet Gateway in AWS VPC
+resource "aws_internet_gateway" "demo-gw-1" {
+    vpc_id = aws_vpc.demo-vpc-1.id
+
+    tags = {
+        Name = "demo-gw-1"
     }
 }
