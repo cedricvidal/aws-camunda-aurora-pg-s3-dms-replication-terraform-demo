@@ -63,3 +63,15 @@ resource "aws_route_table" "demo-rtb-public-1" {
         Name = "demo-rtb-public-1"
     }
 }
+
+
+# Creating Route Associations public subnets
+resource "aws_route_table_association" "dev-public-1-a" {
+    subnet_id      = aws_subnet.demo-subnet-public-1.id
+    route_table_id = aws_route_table.demo-rtb-public-1.id
+}
+
+resource "aws_route_table_association" "dev-public-2-a" {
+    subnet_id      = aws_subnet.demo-subnet-public-2.id
+    route_table_id = aws_route_table.demo-rtb-public-1.id
+}
