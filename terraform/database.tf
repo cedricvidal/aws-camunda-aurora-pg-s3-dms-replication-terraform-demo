@@ -13,7 +13,7 @@ module "cluster" {
   vpc_id  = "${aws_vpc.demo-vpc-1.id}"
   subnets = ["${aws_subnet.demo-subnet-public-1.id}", "${aws_subnet.demo-subnet-public-2.id}"]
 
-  allowed_security_groups = [aws_security_group.demo-sg-1.id]
+  #allowed_security_groups = [aws_security_group.demo-sg-1.id]
   allowed_cidr_blocks     = ["${aws_vpc.demo-vpc-1.cidr_block}"]
 
   storage_encrypted   = true
@@ -35,12 +35,18 @@ module "cluster" {
   create_db_subnet_group = false
 
   # Disable creation of security group - provide a security group
-  create_security_group = false
+  create_security_group = true
+
+#  vpc_security_group_ids = [module.cluster.security_group_id]
 
   tags = {
     Environment = "dev"
     Terraform   = "true"
   }
+}
+
+output "security_group_id" {
+    value = "${module.cluster.security_group_id}"
 }
 
 resource "aws_db_parameter_group" "demo-aurora-db-postgres11-parameter-group" {
