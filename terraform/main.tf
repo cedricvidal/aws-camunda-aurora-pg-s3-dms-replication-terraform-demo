@@ -50,3 +50,16 @@ resource "aws_internet_gateway" "demo-gw-1" {
         Name = "demo-gw-1"
     }
 }
+
+# Creating Route Tables for Internet gateway
+resource "aws_route_table" "demo-rtb-public-1" {
+    vpc_id = aws_vpc.demo-vpc-1.id
+    route {
+        cidr_block = "0.0.0.0/0"
+        gateway_id = aws_internet_gateway.demo-gw-1.id
+    }
+
+    tags = {
+        Name = "demo-rtb-public-1"
+    }
+}
