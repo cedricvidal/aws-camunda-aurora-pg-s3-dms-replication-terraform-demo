@@ -32,7 +32,7 @@ module "cluster" {
   master_password = "th1s1s2d3m0Dms"
 
   # Disable creation of subnet group - provide a subnet group
-  create_db_subnet_group = false
+  create_db_subnet_group = true
 
   # Disable creation of security group - provide a security group
   create_security_group = true
