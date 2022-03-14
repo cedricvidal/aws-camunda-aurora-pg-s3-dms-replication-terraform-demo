@@ -69,7 +69,7 @@ resource "aws_route_table_association" "demo-rtba-public-2-a" {
 resource "aws_instance" "demo-instance-1" {
     ami = "ami-01f87c43e618bf8f0" // Ubuntu Server 20.04 LTS (HVM), SSD Volume Type
     instance_type = "t2.micro"
-    security_groups= [aws_security_group.demo-sg-1.name]
+    security_groups= [aws_security_group.demo-sg-1.id]
     subnet_id = aws_subnet.demo-subnet-public-1.id
     key_name = "demo-key-1"
     tags = {
@@ -78,8 +78,9 @@ resource "aws_instance" "demo-instance-1" {
 }
 
 resource "aws_security_group" "demo-sg-1" {
-    name        = "default"
-    description = "default VPC security group"
+    name        = "demo-sg-1"
+    description = "demo-sg-1 VPC security group"
+    vpc_id      = aws_vpc.demo-vpc-1.id
 
     ingress {
         from_port   = 22
