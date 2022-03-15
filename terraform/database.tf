@@ -64,6 +64,19 @@ resource "aws_rds_cluster_parameter_group" "demo-rds-cluster-parameter-group-1" 
   name        = "demo-aurora-postgres11-cluster-parameter-group"
   family      = "aurora-postgresql11"
   description = "demo-aurora-postgres11-cluster-parameter-group"
+
+  parameter {
+    apply_method = "pending-reboot"
+    name  = "rds.logical_replication"
+    value = 1
+  }
+
+  parameter {
+    apply_method = "pending-reboot"
+    name  = "wal_sender_timeout"
+    value = 0
+  }
+
   tags        = {
       Name = "demo-aurora-postgres11-cluster-parameter-group"
   }
