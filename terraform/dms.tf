@@ -52,8 +52,7 @@ resource "aws_dms_replication_instance" "test" {
   apply_immediately            = true
   auto_minor_version_upgrade   = true
   availability_zone            = "us-west-1a"
-  #engine_version               = "3.1.4"
-  #kms_key_arn                  = "arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012"
+  engine_version               = "3.4.3"
   multi_az                     = false
   preferred_maintenance_window = "sun:10:30-sun:14:30"
   publicly_accessible          = false
@@ -89,4 +88,64 @@ resource "aws_dms_replication_subnet_group" "test-dms-replication-subnet-group-t
   tags = {
     Name = "test-dms-replication-subnet-group-tf"
   }
+}
+
+# Create source database endpoint
+resource "aws_dms_endpoint" "db-dms-source-endpoint" {
+  #certificate_arn             = "arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012"
+  database_name               = var.demo-database-name
+  endpoint_id                 = "db-dms-source-endpoint"
+  endpoint_type               = "source"
+  engine_name                 = "aurora"
+
+  # https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Source.PostgreSQL.html#CHAP_Source.PostgreSQL.ConnectionAttrib
+  extra_connection_attributes = "captureDDLs=N"
+
+  #kms_key_arn                 = "arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012"
+  server_name                 = module.cluster.cluster_reader_endpoint
+  port                        = var.demo-database-port
+  username                    = var.demo-database-username
+  password                    = var.demo-database-password
+  ssl_mode                    = "none"
+
+  tags = {
+    Name = "test"
+  }
+}
+
+# Create source database endpoint
+resource "aws_dms_endpoint" "s3-dms-target-endpoint" {
+  #certificate_arn             = "arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012"
+  endpoint_id                 = "s3-dms-target-endpoint"
+  endpoint_type               = "target"
+  engine_name                 = "s3"
+  extra_connection_attributes = ""
+  #kms_key_arn                 = "arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012"
+
+  s3_settings {
+      bucket_name             = aws_s3_bucket.dms-target-s3-bucket.bucket
+
+      # (Optional) Output format for the files that AWS DMS uses to create S3 objects. Valid values are csv and parquet. Default is csv.
+      data_format             = "parquet"
+
+      # parquet_version - (Optional) Version of the .parquet file format. Default is parquet-1-0. Valid values are parquet-1-0 and parquet-2-0.
+      parquet_version         = "parquet-1-0"
+
+      # (Optional) Whether to write insert and update operations to .csv or .parquet output files. Default is false.
+      cdc_inserts_and_updates = true
+
+      # (Optional) Maximum length of the interval, defined in seconds, after which to output a file to Amazon S3. Default is 60.
+      cdc_max_batch_interval  = 30
+
+      # (Optional) Minimum file size, defined in megabytes, to reach for a file output. Default is 32.
+      cdc_min_file_size       = 1
+
+      # preserve_transactions - (Optional) Whether DMS saves the transaction order for a CDC load on the S3 target specified by cdc_path. Default is false.
+      preserve_transactions   = false
+  }
+
+  tags = {
+    Name = "test"
+  }
+
 }

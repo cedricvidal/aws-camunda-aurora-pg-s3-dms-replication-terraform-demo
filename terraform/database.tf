@@ -28,9 +28,10 @@ module "cluster" {
   # Disable creation of random password - AWS API provides the password
   create_random_password = false
 
-  master_username = "demo"
-  master_password = "th1s1s2d3m0Dms"
-  database_name = "demo"
+  master_username = var.demo-database-username
+  master_password = var.demo-database-password
+  database_name   = var.demo-database-name
+  port            = var.demo-database-port
 
   # Disable creation of subnet group - provide a subnet group
   create_db_subnet_group = true
