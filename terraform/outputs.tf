@@ -28,3 +28,7 @@ output "cluster_database_name" {
   description = "Name for an automatically created database on cluster creation"
   value       = module.cluster.cluster_database_name
 }
+
+output "aws_instance_hostname" {
+  value = aws_instance.demo-instance-1.public_dns
+}
