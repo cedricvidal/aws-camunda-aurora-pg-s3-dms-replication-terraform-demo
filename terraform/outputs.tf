@@ -32,3 +32,7 @@ output "cluster_database_name" {
 output "aws_instance_hostname" {
   value = aws_instance.demo-instance-1.public_dns
 }
+
+output "dms_task_arn" {
+  value = aws_dms_replication_task.db-s3-replcation-task.replication_task_arn
+}
