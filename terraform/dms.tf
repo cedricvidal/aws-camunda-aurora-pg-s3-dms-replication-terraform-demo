@@ -167,6 +167,10 @@ data "template_file" "dms-camunda-history-table-mappings" {
   template = "${file("${path.module}/table-mappings/camunda-history-table-mappings.json")}"
 }
 
+data "template_file" "dms-task-settings" {
+  template = "${file("${path.module}/dms-task-settings.json")}"
+}
+
 # Create a new replication task
 resource "aws_dms_replication_task" "db-s3-replcation-task" {
 
@@ -180,7 +184,7 @@ resource "aws_dms_replication_task" "db-s3-replcation-task" {
   replication_task_id       = "db-s3-replcation-task"
 
   # replication_task_settings - (Optional) An escaped JSON string that contains the task settings. For a complete list of task settings, see Task Settings for AWS Database Migration Service Tasks.
-  # replication_task_settings = "..."
+  replication_task_settings = data.template_file.dms-task-settings.rendered
 
   source_endpoint_arn       = aws_dms_endpoint.db-dms-source-endpoint.endpoint_arn
   table_mappings            = data.template_file.dms-camunda-history-table-mappings.rendered
