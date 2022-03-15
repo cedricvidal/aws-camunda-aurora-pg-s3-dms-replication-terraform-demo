@@ -11,6 +11,11 @@
 ./port-forwarding.sh
 ```
 
+## Download and configure Camunda
+```
+(cd camunda && ./fetch.sh)
+```
+
 ## Start Camunda
 ```
 ./camunda/camunda-run/start.sh
