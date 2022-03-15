@@ -5,8 +5,8 @@
             "rule-id": "1",
             "rule-name": "1",
             "object-locator": {
-                "schema-name": "%",
-                "table-name": "ACT_HI_%"
+                "schema-name": "public",
+                "table-name": "act_hi_%"
             },
             "rule-action": "include"
         }
