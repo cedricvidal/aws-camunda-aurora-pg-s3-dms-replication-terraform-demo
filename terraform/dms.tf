@@ -96,7 +96,7 @@ resource "aws_dms_endpoint" "db-dms-source-endpoint" {
   database_name               = var.demo-database-name
   endpoint_id                 = "db-dms-source-endpoint"
   endpoint_type               = "source"
-  engine_name                 = "aurora"
+  engine_name                 = "aurora-postgresql"
 
   # https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Source.PostgreSQL.html#CHAP_Source.PostgreSQL.ConnectionAttrib
   extra_connection_attributes = "captureDDLs=N"
@@ -111,6 +111,16 @@ resource "aws_dms_endpoint" "db-dms-source-endpoint" {
   tags = {
     Name = "test"
   }
+}
+
+resource "aws_iam_role" "dms-s3-role" {
+  assume_role_policy = data.aws_iam_policy_document.dms_assume_role.json
+  name               = "dms-s3-role"
+}
+
+resource "aws_iam_role_policy_attachment" "dms-s3-role-AmazonS3FullAccess" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+  role       = aws_iam_role.dms-access-for-endpoint.name
 }
 
 # Create source database endpoint
@@ -142,7 +152,40 @@ resource "aws_dms_endpoint" "s3-dms-target-endpoint" {
 
       # preserve_transactions - (Optional) Whether DMS saves the transaction order for a CDC load on the S3 target specified by cdc_path. Default is false.
       preserve_transactions   = false
+
+      # service_access_role_arn - (Optional) ARN of the IAM Role with permissions to read from or write to the S3 Bucket.
+      service_access_role_arn = aws_iam_role.dms-s3-role.arn
   }
+
+  tags = {
+    Name = "test"
+  }
+
+}
+
+data "template_file" "dms-camunda-history-table-mappings" {
+  template = "${file("${path.module}/table-mappings/camunda-history-table-mappings.json")}"
+}
+
+# Create a new replication task
+resource "aws_dms_replication_task" "db-s3-replcation-task" {
+
+  # migration_type - (Required) The migration type. Can be one of full-load | cdc | full-load-and-cdc.
+  migration_type            = "full-load-and-cdc"
+
+  # replication_instance_arn - (Required) The Amazon Resource Name (ARN) of the replication instance.
+  replication_instance_arn  = aws_dms_replication_instance.test.replication_instance_arn
+
+  # replication_task_id - (Required) The replication task identifier.
+  replication_task_id       = "db-s3-replcation-task"
+
+  # replication_task_settings - (Optional) An escaped JSON string that contains the task settings. For a complete list of task settings, see Task Settings for AWS Database Migration Service Tasks.
+  # replication_task_settings = "..."
+
+  source_endpoint_arn       = aws_dms_endpoint.db-dms-source-endpoint.endpoint_arn
+  table_mappings            = data.template_file.dms-camunda-history-table-mappings.rendered
+
+  target_endpoint_arn = aws_dms_endpoint.s3-dms-target-endpoint.endpoint_arn
 
   tags = {
     Name = "test"
