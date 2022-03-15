@@ -144,6 +144,9 @@ resource "aws_dms_endpoint" "s3-dms-target-endpoint" {
       # (Optional) Whether to write insert and update operations to .csv or .parquet output files. Default is false.
       cdc_inserts_and_updates = true
 
+      # include_op_for_full_load - (Optional) Whether to enable a full load to write INSERT operations to the .csv output files only to indicate how the rows were added to the source database. Default is false.
+      include_op_for_full_load = true
+
       # (Optional) Maximum length of the interval, defined in seconds, after which to output a file to Amazon S3. Default is 60.
       cdc_max_batch_interval  = 30
 
