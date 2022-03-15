@@ -102,7 +102,7 @@ resource "aws_dms_endpoint" "db-dms-source-endpoint" {
   extra_connection_attributes = "captureDDLs=N"
 
   #kms_key_arn                 = "arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012"
-  server_name                 = module.cluster.cluster_reader_endpoint
+  server_name                 = module.cluster.cluster_endpoint
   port                        = var.demo-database-port
   username                    = var.demo-database-username
   password                    = var.demo-database-password
