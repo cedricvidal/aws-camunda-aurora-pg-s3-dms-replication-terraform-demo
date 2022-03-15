@@ -120,7 +120,7 @@ resource "aws_iam_role" "dms-s3-role" {
 
 resource "aws_iam_role_policy_attachment" "dms-s3-role-AmazonS3FullAccess" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
-  role       = aws_iam_role.dms-access-for-endpoint.name
+  role       = aws_iam_role.dms-s3-role.name
 }
 
 # Create source database endpoint
@@ -192,3 +192,14 @@ resource "aws_dms_replication_task" "db-s3-replcation-task" {
   }
 
 }
+
+#resource "null_resource" "db-s3-replcation-task-start-replicating" {
+#  triggers = {
+#    dms_task_arn = aws_dms_replication_task.db-s3-replcation-task.replication_task_arn
+#  }
+#  provisioner "local-exec" {
+#    when    = create
+#    command = "aws dms start-replication-task --start-replication-task-type start-replication --replication-task-arn ${self.triggers["dms_task_arn"]}"
+#  }
+#
+#}
