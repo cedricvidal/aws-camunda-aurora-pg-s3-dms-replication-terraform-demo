@@ -48,7 +48,7 @@ Display Parquet full load file content
 parquet cat parquet/public/act_hi_varinst/LOAD00000001.parquet | jq .
 ```
 
-Clain and complete a task
+Claim and complete a task
 
 http://localhost:8080/camunda/app/tasklist/default/
 
